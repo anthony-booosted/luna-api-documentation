@@ -1,0 +1,1247 @@
+openapi: 3.1.0
+x-stoplight:
+  id: 8m7ipf4vfgz0x
+info:
+  title: Luna
+  version: '1.0'
+  description: Endpoints for the Luna application
+  contact:
+    name: Adam Halesworth
+    email: adam@booosteducation.com
+    url: 'https://booosteducation.com'
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+servers:
+  - url: 'https://luna.api.mybooost.com'
+tags:
+  - name: Cards
+    description: Cards endpoints
+  - name: Collections
+    description: Collections endpoints
+  - name: Collections - Reviews
+    description: Collection Timeline endpoints
+  - name: Reviews
+    description: Reviews endpoints
+  - name: Users
+    description: Users endpoints
+paths:
+  /collections:
+    post:
+      summary: Add Collection
+      operationId: post-collections
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Collection'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/Unprocessable-Entity'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Collection'
+      tags:
+        - Collections
+      description: Add a new Collection.
+    get:
+      summary: Get Collections
+      operationId: get-collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Collection'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      tags:
+        - Collections
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      description: Retrieve a list of all Collections.
+    parameters: []
+  '/collections/{collection}':
+    get:
+      summary: Get Collection
+      tags:
+        - Collections
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Collection'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      operationId: 'get-collections-:id'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      description: Retrieve a single Collection.
+    put:
+      summary: Update Collection
+      operationId: put-collections
+      responses:
+        '200':
+          description: OK No empty array returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+        '422':
+          $ref: '#/components/responses/Unprocessable-Entity'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Collection'
+            examples: {}
+        description: ''
+      tags:
+        - Collections
+      description: Update a Collection.
+    parameters:
+      - schema:
+          type: string
+        name: collection
+        in: path
+        required: true
+        description: Collection UUID
+    delete:
+      summary: Delete Collection
+      operationId: delete-collections-id
+      responses:
+        '202':
+          description: Accepted
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      tags:
+        - Collections
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      description: Delete a Collection. This is a soft delete so will only archive the collection.
+  '/collections/{collection}/duplicate':
+    parameters:
+      - schema:
+          type: string
+        name: collection
+        in: path
+        required: true
+        description: Collection UUID
+    post:
+      summary: Duplicate Collection
+      operationId: post-collections-id-duplicate
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Collection'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      tags:
+        - Collections
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      description: Create a copy of a Collection.
+  '/collections/{collection}/cards':
+    parameters:
+      - schema:
+          type: string
+        name: collection
+        in: path
+        required: true
+        description: Collection UUID
+    get:
+      summary: Get Collection Cards
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Card'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      operationId: get-collections-uuid-cards
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      tags:
+        - Cards
+      description: Retrieve the cards for a Collection.
+    post:
+      summary: Add Card
+      operationId: post-collections-uuid-cards
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Card'
+              examples: {}
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+        '422':
+          $ref: '#/components/responses/Unprocessable-Entity'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      description: Add a new Card to a Collection
+      tags:
+        - Cards
+      requestBody:
+        $ref: '#/components/requestBodies/Create-Card'
+  '/collections/{collection}/cards/{card}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: collection
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: card
+        in: path
+        required: true
+    put:
+      summary: Update a Card
+      operationId: put-collections-collection-cards-card
+      responses:
+        '200':
+          description: OK
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+        '422':
+          $ref: '#/components/responses/Unprocessable-Entity'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/Update-Card'
+      tags:
+        - Cards
+    get:
+      summary: Card from Collection
+      operationId: get-collections-collection-cards-card
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Card'
+            application/xml:
+              schema:
+                type: object
+                properties: {}
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      description: Get a specific card from a collection
+      tags:
+        - Cards
+    delete:
+      summary: Delete Card
+      operationId: delete-collections-collection-cards-card
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    data: Card deleted
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      description: Deletes a card and its associated instances
+      tags:
+        - Cards
+  '/collections/{collection}/cards/{card}/duplicate':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: collection
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: card
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-collections-collection-cards-card-duplicate
+      responses:
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+      description: Duplicates a card and associated instances (regenerates UUIDs for all models)
+  '/collections/{collection}/cards/{card}/instances':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: collection
+        in: path
+        required: true
+        description: Collection UUID
+      - schema:
+          type: string
+          format: uuid
+        name: card
+        in: path
+        required: true
+        description: Card UUID
+    post:
+      summary: Add New Card Instance
+      operationId: post-collections-collection-cards-card-instances
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Card'
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Error-Response'
+        '422':
+          $ref: '#/components/responses/Unprocessable-Entity'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      tags:
+        - Cards
+      description: Add a new Card Instance to a Card
+      requestBody:
+        $ref: '#/components/requestBodies/Create-Card-Instance'
+  '/collections/{collection}/cards/{card}/instances/{instance}':
+    parameters:
+      - schema:
+          type: string
+          format: uuid
+        name: collection
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: card
+        in: path
+        required: true
+      - schema:
+          type: string
+          format: uuid
+        name: instance
+        in: path
+        required: true
+    put:
+      summary: Update a Card Instance
+      operationId: put-collections-collection-cards-card-instances-instance
+      responses:
+        '200':
+          description: |-
+            OK
+            No response body returned
+          content:
+            application/json:
+              schema:
+                type: object
+        '401':
+          $ref: '#/components/responses/Unauthenticated'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/Resource-Not-Found'
+        '422':
+          $ref: '#/components/responses/Unprocessable-Entity'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      tags:
+        - Cards
+      requestBody:
+        $ref: '#/components/requestBodies/Update-Card-Instance'
+  /reviews:
+    get:
+      summary: Get All Reviews
+      tags:
+        - Reviews
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+        '204':
+          description: No Content
+      operationId: get-reviews
+      description: |-
+        Retrieve the reviews that have or need to take place.
+
+        #### Notes
+
+        - Reviews that have a `due_at` in the future are considered ephemeral and shouldn't be persisted anywhere. API clients can use this property to determine whether to display different UI elements
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+        - schema:
+            type: string
+            format: uuid
+          in: query
+          name: collection
+          required: true
+    post:
+      summary: Create Review For Collection
+      operationId: post-reviews
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Review'
+        '404':
+          $ref: '#/components/responses/Error-Response'
+      requestBody:
+        $ref: '#/components/requestBodies/Create-Review'
+      tags:
+        - Collections - Reviews
+    parameters: []
+  /user/progress:
+    parameters: []
+    get:
+      summary: Get User Progress
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Progress'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - statistics:
+                          - total: 0
+                            label: string
+                            description: string
+                            sequence: 0
+                        achievements:
+                          - id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+                            code: 0
+                            icon: 'https://example.com/img/confetti.svg'
+                            label: string
+                            description: string
+                            sequence: 0
+                            achieved_at: '2019-08-24T14:15:22Z'
+                        streak: 0
+      operationId: get-collections-collection-progress
+      description: Retrieve the current User's progress and statistics. The correct User instance is discovered via their authentication context.
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      tags:
+        - Users
+  /user/profile:
+    get:
+      summary: Get Profile
+      tags:
+        - Users
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Profile'
+      operationId: get-user-profile
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+          application/xml:
+            schema:
+              type: object
+              properties: {}
+      description: Get the current user's profile information. The correct User instance is discovered via their authentication context.
+    put:
+      summary: Update Profile
+      operationId: put-user-profile
+      responses:
+        '200':
+          description: OK
+        '404':
+          $ref: '#/components/responses/Error-Response'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+        description: ''
+      description: 'Update the current user''s profile data. The correct User instance is discovered via their authentication context, thus doesn''t require a uuid.'
+      tags:
+        - Users
+  /user/achievements/pop:
+    post:
+      summary: Pop Achievement
+      operationId: post-user-achievements-pop
+      responses:
+        '202':
+          description: Accepted
+        '403':
+          $ref: '#/components/responses/Error-Response'
+        '404':
+          $ref: '#/components/responses/Error-Response'
+      description: 'Pops an Achievement, indicating a user has achieved it.'
+      parameters:
+        - $ref: '#/components/parameters/Accept'
+        - $ref: '#/components/parameters/Content-Type'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nonce:
+                  type: string
+                  description: Prevents third-party access from popping an achievement a user hasn't earned. Specification to be determined.
+                code:
+                  type: integer
+                  description: 'The internal code used to reference the achievement, used to "pop" the achievement for a user.'
+        description: ''
+      tags:
+        - Users
+      deprecated: true
+    parameters: []
+components:
+  schemas:
+    Collection:
+      title: Collection
+      x-stoplight:
+        id: tg8sr6gzgja7l
+      type: object
+      description: ''
+      x-internal: false
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          minLength: 16
+          maxLength: 16
+          readOnly: true
+        title:
+          type: string
+          maxLength: 40
+        confidence:
+          type: integer
+          minimum: 0
+          maximum: 3
+          readOnly: true
+        target_date:
+          type:
+            - string
+            - 'null'
+          format: date
+          pattern: yyyy-mm-dd
+          default: null
+        learning_mode:
+          type: integer
+          format: int32
+          enum:
+            - 0
+            - 1
+          example: 0
+        cram_mode:
+          type: boolean
+          default: false
+        difficulty:
+          type: number
+          minimum: 0
+          maximum: 1
+          format: float
+          example: 0.3
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        completed_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+        review_reminders:
+          type:
+            - string
+            - 'null'
+          format: time
+        include_weekends:
+          type: boolean
+        metadata:
+          type: object
+          properties:
+            review_cards_to_review:
+              type: integer
+              format: int32
+              example: 6
+              readOnly: true
+            review_due_at:
+              type: string
+              format: date-time
+              readOnly: true
+            total_cards:
+              type: integer
+              default: 0
+              readOnly: true
+            total_reviews:
+              type: integer
+              default: 0
+              readOnly: true
+          readOnly: true
+      examples:
+        - uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
+          title: string
+          confidence: 0
+          target_date: null
+          learning_mode: 0
+          cram_mode: false
+          difficulty: 0.3
+          created_at: '2019-08-24T14:15:22Z'
+          completed_at: '2019-08-24T14:15:22Z'
+          review_reminders: '14:15:22Z'
+          include_weekends: true
+          metadata:
+            review_cards_to_review: 6
+            review_due_at: '2019-08-24T14:15:22Z'
+            total_cards: 0
+            total_reviews: 0
+    Review:
+      title: Review
+      x-stoplight:
+        id: sjnu5pw766dkw
+      description: ''
+      allOf:
+        - type: object
+          properties:
+            uuid:
+              type: string
+              format: uuid
+              readOnly: true
+            due_at:
+              type: string
+              format: date-time
+              readOnly: true
+            taken_at:
+              type:
+                - string
+                - 'null'
+              format: date-time
+              readOnly: true
+            skipped:
+              type: boolean
+              default: false
+              readOnly: true
+            cards_to_review:
+              type: integer
+              format: int32
+              default: 0
+              readOnly: true
+            cards_reviewed:
+              type: integer
+              format: int32
+              default: 0
+              readOnly: true
+            metadata:
+              type: object
+              description: Only sent if looking at Planner
+              properties:
+                collection_title:
+                  type: string
+                  readOnly: true
+                collection_confidence:
+                  type: integer
+                  minimum: 0
+                  maximum: 3
+                collection_target_date:
+                  type:
+                    - string
+                    - 'null'
+                  format: date-time
+        - $ref: '#/components/schemas/Sequence'
+    Card:
+      title: Card
+      x-stoplight:
+        id: v0mhjoloqdjbk
+      type: object
+      description: A flashcard for learning a piece of content.
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        original_content:
+          type: string
+          example: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Netus integer egestas in vitae volutpat pellentesque erat. Lorem pharetra proin nec, volutpat et praesent. Neque vitae lorem dictum amet ut magna amet.'
+          readOnly: true
+        current_instance_id:
+          type: string
+          format: uuid
+          readOnly: true
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Card-Instance'
+          readOnly: true
+    Card-Instance:
+      title: Card Instance
+      x-stoplight:
+        id: zwfqq5npzh15n
+      description: |-
+        An instance of a `Card` that represents a card type and the data that drives it.
+
+        By decoupling the `Card` from its data, we can easily add new card types, generate data from the original card content, supply default cards, clear a card of its data etc.
+
+        #### Notes
+
+        - There should only ever be the same number of instances for a given `Card` in the database as there are types of card.
+        - The object properties here define the card types that can be expressed by the system.
+        - The `card_type` property is special, and is a convenience for API clients to easily determine the card type without having to compute it themselves.
+      examples: []
+      type: object
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        card_type:
+          type: integer
+          minimum: 0
+          maximum: 1
+        question:
+          type: string
+          maxLength: 240
+        is_true:
+          type:
+            - boolean
+            - 'null'
+        answer:
+          type:
+            - string
+            - 'null'
+          maxLength: 240
+        is_suggestion:
+          type: boolean
+          default: false
+          description: Indicates that this instance was generated by AI
+    Profile:
+      title: Profile
+      x-stoplight:
+        id: 9jy4wk3rxyts4
+      type: object
+      examples:
+        - uuid: 095be615-a8ad-4c33-8e9c-c7612fbf6c9f
+          name: Jonathan Byers
+          email_address: j.byers@hawkinspost.com
+          24h_clock: false
+          notifications: false
+          course_study: Photography
+          learning_speed: 0.3
+          learning_tod: 0
+      description: ''
+      properties:
+        uuid:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+        email_address:
+          type: string
+          format: email
+        24h_clock:
+          type: boolean
+          default: false
+        notifications:
+          type: boolean
+          default: false
+        course_study:
+          type: string
+          example: Psychology
+        learning_speed:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.3
+        learning_tod:
+          type: integer
+          enum:
+            - 0
+            - 1
+            - 2
+          description: |-
+            The time of day that the User has indicated they best learn new information.
+            - `0` for Morning.
+            - `1` for Afternoon.
+            - `2` for Evening.
+    Progress:
+      type: object
+      title: Progress
+      x-stoplight:
+        id: bhnnu4g79sc6e
+      description: ''
+      properties:
+        streak:
+          type:
+            - number
+            - 'null'
+          description: 'Number of reviews in a row, or null if streak requirement is not met.'
+          readOnly: true
+        statistics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Progress-Statistic'
+          readOnly: true
+        achievements:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achievement'
+          readOnly: true
+      readOnly: true
+      examples: []
+    Achievement:
+      title: Achievement
+      x-stoplight:
+        id: 6271vgkhdfkze
+      type: object
+      description: 'A friendly "thing" to achieve while using the application, from certain actions to milestones etc.'
+      examples: []
+      properties:
+        code:
+          type: integer
+          description: 'The internal code used to reference the achievement, used to "pop" the achievement for a user.'
+          readOnly: true
+        icon:
+          type: string
+          format: uri
+          description: A link to an SVG to display
+          example: 'https://s3.example.com/img/confetti.svg'
+          readOnly: true
+        label:
+          type: string
+          description: The friendly label for the achievement
+          readOnly: true
+        description:
+          type: string
+          readOnly: true
+        sequence:
+          type: integer
+        achieved_at:
+          type:
+            - string
+            - 'null'
+          format: date-time
+          readOnly: true
+    Progress-Statistic:
+      title: Progress Statistic
+      x-stoplight:
+        id: dcwl92hk6tce5
+      description: A single statistic that can represent any metric for display.
+      allOf:
+        - type: object
+          properties:
+            total:
+              type: number
+              readOnly: true
+            label:
+              type: string
+              readOnly: true
+            description:
+              type: string
+              readOnly: true
+        - $ref: '#/components/schemas/Sequence'
+      readOnly: true
+    Sequence:
+      title: Sequence
+      x-stoplight:
+        id: kkls4lih2uibr
+      type: object
+      properties:
+        sequence:
+          type: integer
+          format: int32
+          default: 0
+          readOnly: true
+      x-internal: true
+  securitySchemes:
+    Bearer:
+      type: http
+      scheme: bearer
+      description: 'The service will return a `401` response if the token is expired, improperly formatted or omitted entirely.'
+  requestBodies:
+    Create-Card:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              original_content:
+                type: string
+              instance:
+                $ref: '#/components/schemas/Card-Instance'
+            required:
+              - original_content
+              - instance
+          examples: {}
+      description: ''
+    Update-Card:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              current_instance_id:
+                type: string
+                format: uuid
+          examples: {}
+    Update-Card-Instance:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Card-Instance'
+          examples: {}
+    Create-Card-Instance:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Card-Instance'
+    Create-Review:
+      content:
+        application/json:
+          schema:
+            type: object
+            x-examples:
+              example-1:
+                collection_id: 4bdef85c-3f50-4006-a713-2350da665f80
+                cards:
+                  - card_id: 66f6e46c-f6a1-4af8-a1bd-49666bc01304
+                    quality: 1
+            properties:
+              collection_id:
+                type: string
+              cards:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    card_id:
+                      type: string
+                    quality:
+                      type: integer
+                      enum:
+                        - 0
+                        - 1
+                        - 2
+                        - 3
+          examples:
+            example-1:
+              value:
+                collection_id: 4bdef85c-3f50-4006-a713-2350da665f80
+                cards:
+                  - card_id: 66f6e46c-f6a1-4af8-a1bd-49666bc01304
+                    quality: 1
+  parameters:
+    Accept:
+      name: Accept
+      in: header
+      required: false
+      schema:
+        type: string
+      description: application/json
+    Content-Type:
+      name: Content-Type
+      in: header
+      required: false
+      schema:
+        type: string
+      description: application/json
+  responses:
+    Error-Response:
+      description: A failed response object
+      content:
+        application/json:
+          schema:
+            type: object
+            x-examples:
+              example-1:
+                error: string
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+          examples:
+            example-1:
+              value:
+                error:
+                  code: 422
+                  message: Unprocessible Entity
+        application/xml:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+            x-examples:
+              example-1:
+                success: false
+                error: string
+    Resource-Not-Found:
+      description: One of the resources in the request was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+          examples:
+            example-1:
+              value:
+                error:
+                  code: 404
+                  message: '{resource} not found'
+        application/xml:
+          schema:
+            type: object
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        text/html:
+          schema:
+            type: object
+            properties:
+              '':
+                type: string
+      headers: {}
+    Unprocessable-Entity:
+      description: 'Returned when input validation fails. If more than one validation rule fails, the messages will be imploded from an array to a string to better help the user.'
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+          examples:
+            example-1:
+              value:
+                error:
+                  code: 422
+                  message: 'the value you submitted for {x} didnt pass validation rule {y}'
+    Forbidden:
+      description: Returned when the authenticated user is prevented from accessing a resource. Most typically will be returned when attempting to access a resource that belongs to another user.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+          examples:
+            example-1:
+              value:
+                error:
+                  code: 403
+                  message: Forbidden
+    Unauthenticated:
+      description: Returned when the user is not logged in (defined as presenting a valid Bearer token on the request).
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                  message:
+                    type: string
+          examples:
+            example-1:
+              value:
+                error:
+                  code: 401
+                  message: Unauthenticated
+        application/xml:
+          schema:
+            type: object
+            properties: {}
+  examples: {}
+security:
+  - Bearer: []
